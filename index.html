@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beamer Patterns — Паттерны слайдов LaTeX Beamer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-2: #242836;
+      --border: #2e3345;
+      --text: #e8eaed;
+      --text-muted: #9aa0b0;
+      --accent: #7c9cff;
+      --accent-hover: #9bb3ff;
+      --success: #3dd68c;
+      --code-bg: #12141c;
+      --slide-bg: #f8f9fc;
+      --slide-header: #1e3a5f;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(180deg, #161922 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(124, 156, 255, 0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.03em;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .nav-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: rgba(124, 156, 255, 0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .pattern {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1.75rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .pattern:hover {
+      border-color: #3d4560;
+    }
+
+    .pattern-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pattern-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .pattern-tag {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: var(--bg);
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .pattern-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 280px;
+    }
+
+    @media (max-width: 800px) {
+      .pattern-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .code-panel {
+      position: relative;
+      background: var(--code-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 800px) {
+      .code-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    .code-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.6rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.25);
+    }
+
+    .copy-btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .copy-btn.copied {
+      background: rgba(61, 214, 140, 0.15);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    pre {
+      margin: 0;
+      padding: 1rem 1.1rem 1.25rem;
+      overflow-x: auto;
+      flex: 1;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: #c8d0e0;
+    }
+
+    .preview-panel {
+      background: #eef1f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .slide {
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 16 / 9;
+      background: var(--slide-bg);
+      border-radius: 6px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+    }
+
+    .slide-header {
+      background: var(--slide-header);
+      color: white;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .slide-content {
+      flex: 1;
+      padding: 0.9rem 1rem;
+      font-size: 0.72rem;
+      overflow: hidden;
+    }
+
+    .slide-content ul {
+      padding-left: 1.1rem;
+      margin: 0.3rem 0;
+    }
+
+    .slide-content li {
+      margin-bottom: 0.25rem;
+    }
+
+    .slide-title-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 1rem;
+      background: linear-gradient(160deg, #1e3a5f 0%, #2a4a73 100%);
+      color: white;
+    }
+
+    .slide-title-page .main-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-title-page .subtitle {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-bottom: 1rem;
+    }
+
+    .slide-title-page .author {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      height: 100%;
+    }
+
+    .col {
+      background: #f0f3f8;
+      border-radius: 4px;
+      padding: 0.5rem;
+    }
+
+    .col h4 {
+      font-size: 0.7rem;
+      margin-bottom: 0.3rem;
+      color: #1e3a5f;
+    }
+
+    .block {
+      border-radius: 4px;
+      padding: 0.45rem 0.6rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.68rem;
+    }
+
+    .block-def {
+      background: #e8f0fe;
+      border-left: 3px solid #4285f4;
+    }
+
+    .block-ex {
+      background: #e6f4ea;
+      border-left: 3px solid #34a853;
+    }
+
+    .block-alert {
+      background: #fce8e6;
+      border-left: 3px solid #ea4335;
+    }
+
+    .code-block {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border-radius: 4px;
+      padding: 0.5rem 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      line-height: 1.45;
+      overflow: hidden;
+    }
+
+    .math-preview {
+      text-align: center;
+      font-size: 1.1rem;
+      padding: 1.5rem 0;
+      font-family: 'Times New Roman', serif;
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 0.5rem;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: #1e3a5f;
+    }
+
+    .tl-point {
+      width: 10px;
+      height: 10px;
+      background: #1e3a5f;
+      border-radius: 50%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-label {
+      position: absolute;
+      top: 18px;
+      font-size: 0.6rem;
+      white-space: nowrap;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Syntax highlighting (simple) */
+    .kw { color: #c792ea; }
+    .cmd { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .cmt { color: #676e95; }
+    .env { color: #f78c6c; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">LaTeX Beamer</div>
+    <h1>Паттерны слайдов Beamer</h1>
+    <p>20 готовых паттернов для учебных и технических презентаций. Скопируй и вставь в свою презентацию.</p>
+  </header>
+
+  <div class="container">
+    <div class="nav-filters">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="structure">Структура</button>
+      <button class="filter-btn" data-filter="layout">Макет</button>
+      <button class="filter-btn" data-filter="content">Контент</button>
+      <button class="filter-btn" data-filter="visual">Визуал</button>
+    </div>
+
+    <!-- 1. Title page -->
+    <article class="pattern" data-category="structure">
+      <div class="pattern-header">
+        <span class="pattern-title">Титульный слайд</span>
+        <span class="pattern-tag">titlepage</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmt">% В преамбуле:</span>
+<span class="cmd">\title</span>{Название доклада}
+<span class="cmd">\subtitle</span>{Подзаголовок (опционально)}
+<span class="cmd">\author</span>{Имя Фамилия}
+<span class="cmd">\institute</span>{Университет / Компания}
+<span class="cmd">\date</span>{\today}
+
+<span class="cmt">% В document:</span>
+<span class="cmd">\begin</span>{frame}
+  <span class="cmd">\titlepage</span>
+<span class="cmd">\end</span>{frame}
+
+<span class="cmt">% Или без нумерации:</span>
+{
+  <span class="cmd">\setbeamertemplate</span>{footline}{}
+  <span class="cmd">\setbeamertemplate</span>{headline}{}
+  <span class="cmd">\frame</span>{\titlepage}
+  <span class="cmd">\addtocounter</span>{framenumber}{-1}
+}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-title-page">
+              <div class="main-title">Название доклада</div>
+              <div class="subtitle">Подзаголовок презентации</div>
+              <div class="author">Имя Фамилия<br>Университет · 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. Table of contents -->
+    <article class="pattern" data-category="structure">
+      <div class="pattern-header">
+        <span class="pattern-title">Оглавление</span>
+        <span class="pattern-tag">tableofcontents</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Оглавление}
+  <span class="cmd">\tableofcontents</span>
+<span class="cmd">\end</span>{frame}
+
+<span class="cmt">% Только текущий раздел:</span>
+<span class="cmd">\begin</span>{frame}{План раздела}
+  <span class="cmd">\tableofcontents</span>[currentsection]
+<span class="cmd">\end</span>{frame}
+
+<span class="cmt">% С паузами (появляется по частям):</span>
+<span class="cmd">\begin</span>{frame}{Оглавление}
+  <span class="cmd">\tableofcontents</span>[pausesections]
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Оглавление</div>
+            <div class="slide-content">
+              <ol style="padding-left:1.2rem; margin:0.4rem 0; font-size:0.78rem;">
+                <li style="margin-bottom:0.35rem;">Введение</li>
+                <li style="margin-bottom:0.35rem;">Метод</li>
+                <li style="margin-bottom:0.35rem;">Эксперименты</li>
+                <li style="margin-bottom:0.35rem;">Результаты</li>
+                <li style="margin-bottom:0.35rem;">Заключение</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. Simple bullets -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Простой список</span>
+        <span class="pattern-tag">itemize</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Ключевые идеи}
+  <span class="cmd">\begin</span>{itemize}
+    <span class="cmd">\item</span> Первый важный пункт
+    <span class="cmd">\item</span> Второй пункт с деталями
+    <span class="cmd">\item</span> Третий пункт
+      <span class="cmd">\begin</span>{itemize}
+        <span class="cmd">\item</span> Подпункт A
+        <span class="cmd">\item</span> Подпункт B
+      <span class="cmd">\end</span>{itemize}
+    <span class="cmd">\item</span> Четвёртый пункт
+  <span class="cmd">\end</span>{itemize}
+<span class="cmd">\end</span>{frame}
+
+<span class="cmt">% С паузами:</span>
+<span class="cmd">\begin</span>{frame}{Появление по частям}
+  <span class="cmd">\begin</span>{itemize}
+    <span class="cmd">\item</span>&lt;1-&gt; Сначала это
+    <span class="cmd">\item</span>&lt;2-&gt; Потом это
+    <span class="cmd">\item</span>&lt;3-&gt; И наконец это
+  <span class="cmd">\end</span>{itemize}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Ключевые идеи</div>
+            <div class="slide-content">
+              <ul>
+                <li>Первый важный пункт</li>
+                <li>Второй пункт с деталями</li>
+                <li>Третий пункт
+                  <ul>
+                    <li>Подпункт A</li>
+                    <li>Подпункт B</li>
+                  </ul>
+                </li>
+                <li>Четвёртый пункт</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. Two columns -->
+    <article class="pattern" data-category="layout">
+      <div class="pattern-header">
+        <span class="pattern-title">Две колонки</span>
+        <span class="pattern-tag">columns</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Сравнение}
+  <span class="cmd">\begin</span>{columns}[T]  <span class="cmt">% T = top align</span>
+
+  <span class="cmd">\begin</span>{column}{0.48\textwidth}
+    <span class="cmd">\textbf</span>{Подход A}
+    <span class="cmd">\begin</span>{itemize}
+      <span class="cmd">\item</span> Плюс 1
+      <span class="cmd">\item</span> Плюс 2
+      <span class="cmd">\item</span> Минус 1
+    <span class="cmd">\end</span>{itemize}
+  <span class="cmd">\end</span>{column}
+
+  <span class="cmd">\begin</span>{column}{0.48\textwidth}
+    <span class="cmd">\textbf</span>{Подход B}
+    <span class="cmd">\begin</span>{itemize}
+      <span class="cmd">\item</span> Плюс 1
+      <span class="cmd">\item</span> Плюс 2
+      <span class="cmd">\item</span> Минус 1
+    <span class="cmd">\end</span>{itemize}
+  <span class="cmd">\end</span>{column}
+
+  <span class="cmd">\end</span>{columns}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Сравнение</div>
+            <div class="slide-content">
+              <div class="two-col">
+                <div class="col">
+                  <h4>Подход A</h4>
+                  <ul style="padding-left:0.9rem; margin:0; font-size:0.65rem;">
+                    <li>Плюс 1</li>
+                    <li>Плюс 2</li>
+                    <li>Минус 1</li>
+                  </ul>
+                </div>
+                <div class="col">
+                  <h4>Подход B</h4>
+                  <ul style="padding-left:0.9rem; margin:0; font-size:0.65rem;">
+                    <li>Плюс 1</li>
+                    <li>Плюс 2</li>
+                    <li>Минус 1</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5. Blocks -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Блоки (definition / example / alert)</span>
+        <span class="pattern-tag">block</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Определения и примеры}
+  <span class="cmd">\begin</span>{definition}[Термин]
+    Здесь идёт определение важного понятия.
+  <span class="cmd">\end</span>{definition}
+
+  <span class="cmd">\begin</span>{example}
+    Пример использования этого понятия.
+  <span class="cmd">\end</span>{example}
+
+  <span class="cmd">\begin</span>{alertblock}{Важно!}
+    Обратите внимание на этот момент.
+  <span class="cmd">\end</span>{alertblock}
+
+  <span class="cmt">% Или обычный block:</span>
+  <span class="cmd">\begin</span>{block}{Заголовок блока}
+    Содержимое блока.
+  <span class="cmd">\end</span>{block}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Определения и примеры</div>
+            <div class="slide-content">
+              <div class="block block-def"><strong>Определение (Термин)</strong><br>Здесь идёт определение важного понятия.</div>
+              <div class="block block-ex"><strong>Пример</strong><br>Пример использования этого понятия.</div>
+              <div class="block block-alert"><strong>Важно!</strong><br>Обратите внимание на этот момент.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6. Code listing -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Листинг кода</span>
+        <span class="pattern-tag">lstlisting / fragile</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmt">% В преамбуле:</span>
+<span class="cmd">\usepackage</span>{listings}
+<span class="cmd">\lstset</span>{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{gray},
+  numbers=left,
+  numberstyle=\tiny,
+  frame=single,
+  breaklines=true
+}
+
+<span class="cmt">% На слайде (обязательно [fragile]):</span>
+<span class="cmd">\begin</span>{frame}[fragile]{Пример кода}
+  <span class="cmd">\begin</span>{lstlisting}[language=Python]
+def hello(name):
+    print(f"Hello, {name}!")
+    return True
+  <span class="cmd">\end</span>{lstlisting}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Пример кода</div>
+            <div class="slide-content">
+              <div class="code-block">
+<span style="color:#c792ea">def</span> <span style="color:#82aaff">hello</span>(name):
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">f"Hello, {name}!"</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">True</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 7. Math -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Формулы</span>
+        <span class="pattern-tag">equation / align</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Основная формула}
+  Главное уравнение:
+  <span class="cmd">\begin</span>{equation}
+    E = mc^2
+  <span class="cmd">\end</span>{equation}
+
+  Система уравнений:
+  <span class="cmd">\begin</span>{align}
+    a_1 x + b_1 y &amp;= c_1 \\
+    a_2 x + b_2 y &amp;= c_2
+  <span class="cmd">\end</span>{align}
+
+  Инлайн: $f(x) = \sum_{i=1}^{n} x_i$
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Основная формула</div>
+            <div class="slide-content">
+              <div style="font-size:0.72rem; margin-bottom:0.5rem;">Главное уравнение:</div>
+              <div class="math-preview">E = mc²</div>
+              <div style="font-size:0.68rem; text-align:center; margin-top:0.6rem;">
+                a₁x + b₁y = c₁<br>
+                a₂x + b₂y = c₂
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 8. Image -->
+    <article class="pattern" data-category="visual">
+      <div class="pattern-header">
+        <span class="pattern-title">Изображение с подписью</span>
+        <span class="pattern-tag">figure / includegraphics</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Результаты эксперимента}
+  <span class="cmd">\begin</span>{figure}
+    <span class="cmd">\centering</span>
+    <span class="cmd">\includegraphics</span>[width=0.75\textwidth]{plot.pdf}
+    <span class="cmd">\caption</span>{Зависимость точности от размера данных}
+  <span class="cmd">\end</span>{figure}
+<span class="cmd">\end</span>{frame}
+
+<span class="cmt">% Картинка на весь слайд (без заголовка):</span>
+<span class="cmd">\begin</span>{frame}[plain]
+  <span class="cmd">\centering</span>
+  <span class="cmd">\includegraphics</span>[width=\textwidth,height=0.9\textheight,
+                 keepaspectratio]{big-figure.pdf}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Результаты эксперимента</div>
+            <div class="slide-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+              <div style="width:85%; height:55%; background:linear-gradient(135deg,#dbeafe,#e0e7ff); border-radius:4px; display:flex; align-items:center; justify-content:center; color:#3b5bdb; font-size:0.7rem;">
+                [график / изображение]
+              </div>
+              <div style="font-size:0.6rem; color:#555; margin-top:0.4rem; text-align:center;">
+                Рис. 1: Зависимость точности от размера данных
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 9. Two columns with image -->
+    <article class="pattern" data-category="layout">
+      <div class="pattern-header">
+        <span class="pattern-title">Текст + картинка</span>
+        <span class="pattern-tag">columns + figure</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Архитектура системы}
+  <span class="cmd">\begin</span>{columns}[c]
+
+  <span class="cmd">\begin</span>{column}{0.5\textwidth}
+    <span class="cmd">\begin</span>{itemize}
+      <span class="cmd">\item</span> Модуль A обрабатывает вход
+      <span class="cmd">\item</span> Модуль B делает вывод
+      <span class="cmd">\item</span> Результат передаётся дальше
+    <span class="cmd">\end</span>{itemize}
+  <span class="cmd">\end</span>{column}
+
+  <span class="cmd">\begin</span>{column}{0.45\textwidth}
+    <span class="cmd">\includegraphics</span>[width=\textwidth]{arch.pdf}
+  <span class="cmd">\end</span>{column}
+
+  <span class="cmd">\end</span>{columns}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Архитектура системы</div>
+            <div class="slide-content">
+              <div class="two-col" style="align-items:center;">
+                <div>
+                  <ul style="padding-left:0.9rem; margin:0; font-size:0.65rem;">
+                    <li>Модуль A обрабатывает вход</li>
+                    <li>Модуль B делает вывод</li>
+                    <li>Результат передаётся дальше</li>
+                  </ul>
+                </div>
+                <div style="background:#dbeafe; border-radius:4px; height:70%; display:flex; align-items:center; justify-content:center; color:#3b5bdb; font-size:0.6rem;">
+                  [схема]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 10. Section page -->
+    <article class="pattern" data-category="structure">
+      <div class="pattern-header">
+        <span class="pattern-title">Разделитель раздела</span>
+        <span class="pattern-tag">section page</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmt">% Автоматический разделитель (в преамбуле):</span>
+<span class="cmd">\AtBeginSection</span>[]{
+  <span class="cmd">\begin</span>{frame}
+    <span class="cmd">\vfill</span>
+    <span class="cmd">\centering</span>
+    <span class="cmd">\begin</span>{beamercolorbox}[sep=8pt,center,
+      shadow=true,rounded=true]{title}
+      <span class="cmd">\usebeamerfont</span>{title}<span class="cmd">\insertsectionhead</span>\par
+    <span class="cmd">\end</span>{beamercolorbox}
+    <span class="cmd">\vfill</span>
+  <span class="cmd">\end</span>{frame}
+}
+
+<span class="cmt">% Или вручную:</span>
+<span class="cmd">\begin</span>{frame}[plain,c]
+  <span class="cmd">\centering</span>
+  <span class="cmd">\Huge</span>\textbf{2. Метод}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div style="display:flex; align-items:center; justify-content:center; height:100%; background:linear-gradient(160deg,#1e3a5f,#2a4a73); color:white;">
+              <div style="text-align:center;">
+                <div style="font-size:0.7rem; opacity:0.7; margin-bottom:0.4rem;">Раздел 2</div>
+                <div style="font-size:1.2rem; font-weight:700;">Метод</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 11. Multicol -->
+    <article class="pattern" data-category="layout">
+      <div class="pattern-header">
+        <span class="pattern-title">Три колонки (multicol)</span>
+        <span class="pattern-tag">multicol</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmt">% В преамбуле:</span>
+<span class="cmd">\usepackage</span>{multicol}
+
+<span class="cmd">\begin</span>{frame}{Три колонки}
+  <span class="cmd">\begin</span>{multicols}{3}
+    <span class="cmd">\begin</span>{itemize}
+      <span class="cmd">\item</span> Пункт 1
+      <span class="cmd">\item</span> Пункт 2
+      <span class="cmd">\item</span> Пункт 3
+      <span class="cmd">\item</span> Пункт 4
+      <span class="cmd">\item</span> Пункт 5
+      <span class="cmd">\item</span> Пункт 6
+    <span class="cmd">\end</span>{itemize}
+  <span class="cmd">\end</span>{multicols}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Три колонки</div>
+            <div class="slide-content">
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; font-size:0.65rem;">
+                <ul style="padding-left:0.9rem; margin:0;"><li>Пункт 1</li><li>Пункт 2</li></ul>
+                <ul style="padding-left:0.9rem; margin:0;"><li>Пункт 3</li><li>Пункт 4</li></ul>
+                <ul style="padding-left:0.9rem; margin:0;"><li>Пункт 5</li><li>Пункт 6</li></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 12. Thank you -->
+    <article class="pattern" data-category="structure">
+      <div class="pattern-header">
+        <span class="pattern-title">Финальный слайд</span>
+        <span class="pattern-tag">thank you</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar">
+            <button class="copy-btn" onclick="copyCode(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Копировать
+            </button>
+          </div>
+          <pre><code><span class="cmd">\begin</span>{frame}[plain,c]
+  <span class="cmd">\centering</span>
+  <span class="cmd">\Huge</span>\textbf{Спасибо за внимание!}
+
+  <span class="cmd">\vspace</span>{1.5em}
+
+  <span class="cmd">\large</span>
+  Вопросы?
+
+  <span class="cmd">\vspace</span>{1em}
+  <span class="cmd">\normalsize</span>
+  \texttt{email@example.com}\\
+  \texttt{github.com/username}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; background:linear-gradient(160deg,#1e3a5f,#2a4a73); color:white; text-align:center; padding:1rem;">
+              <div style="font-size:1.15rem; font-weight:700; margin-bottom:0.8rem;">Спасибо за внимание!</div>
+              <div style="font-size:0.8rem; opacity:0.9; margin-bottom:1rem;">Вопросы?</div>
+              <div style="font-size:0.65rem; opacity:0.65; font-family:monospace;">email@example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+
+
+    <!-- 13. Table comparison -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Таблица / сравнительная матрица</span>
+        <span class="pattern-tag">table / tabularx</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmt">% В преамбуле:</span>
+<span class="cmd">\usepackage</span>{tabularx}
+<span class="cmd">\usepackage</span>{booktabs}
+
+<span class="cmd">\begin</span>{frame}{Сравнение команд}
+  <span class="cmd">\small</span>
+  <span class="cmd">\begin</span>{tabularx}{\textwidth}{lXX}
+    <span class="cmd">\toprule</span>
+    Команда & Назначение & Особенность \\
+    <span class="cmd">\midrule</span>
+    <span class="cmd">\texttt</span>{useradd} &
+      Создание пользователя & Низкоуровневая утилита \\
+    <span class="cmd">\texttt</span>{adduser} &
+      Создание пользователя & Интерактивная оболочка \\
+    <span class="cmd">\bottomrule</span>
+  <span class="cmd">\end</span>{tabularx}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Сравнение команд</div>
+            <div class="slide-content">
+              <table style="width:100%; border-collapse:collapse; font-size:0.62rem;">
+                <thead><tr style="border-bottom:2px solid #1e3a5f;"><th style="text-align:left;padding:0.35rem;">Команда</th><th style="text-align:left;padding:0.35rem;">Назначение</th><th style="text-align:left;padding:0.35rem;">Особенность</th></tr></thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid #cbd5e1;"><td style="padding:0.4rem;font-family:monospace;">useradd</td><td style="padding:0.4rem;">Создание пользователя</td><td style="padding:0.4rem;">Низкоуровневая</td></tr>
+                  <tr><td style="padding:0.4rem;font-family:monospace;">adduser</td><td style="padding:0.4rem;">Создание пользователя</td><td style="padding:0.4rem;">Интерактивная</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 14. Command and output -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Команда → результат</span>
+        <span class="pattern-tag">terminal / output</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmt">% Требуется listings</span>
+<span class="cmd">\begin</span>{frame}[fragile]{Проверка пользователя}
+  <span class="cmd">\textbf</span>{Команда}
+  <span class="cmd">\begin</span>{lstlisting}[language=bash]
+id milan
+  <span class="cmd">\end</span>{lstlisting}
+
+  <span class="cmd">\textbf</span>{Результат}
+  <span class="cmd">\begin</span>{lstlisting}
+uid=1000(milan) gid=1000(milan)
+groups=1000(milan),27(sudo)
+  <span class="cmd">\end</span>{lstlisting}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Проверка пользователя</div>
+            <div class="slide-content">
+              <div style="font-size:0.65rem;font-weight:600;margin-bottom:0.25rem;">Команда</div>
+              <div class="code-block" style="margin-bottom:0.65rem;">$ id milan</div>
+              <div style="font-size:0.65rem;font-weight:600;margin-bottom:0.25rem;">Результат</div>
+              <div class="code-block">uid=1000(milan) gid=1000(milan)<br>groups=1000(milan),27(sudo)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 15. Command explanation -->
+    <article class="pattern" data-category="layout">
+      <div class="pattern-header">
+        <span class="pattern-title">Команда → объяснение параметров</span>
+        <span class="pattern-tag">columns / command</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Создание пользователя}
+  <span class="cmd">\begin</span>{columns}[T]
+    <span class="cmd">\begin</span>{column}{0.48\textwidth}
+      <span class="cmd">\texttt</span>{useradd -m -s /bin/bash student}
+    <span class="cmd">\end</span>{column}
+
+    <span class="cmd">\begin</span>{column}{0.48\textwidth}
+      <span class="cmd">\begin</span>{description}
+        <span class="cmd">\item</span>[-m] создать домашний каталог
+        <span class="cmd">\item</span>[-s] задать оболочку
+        <span class="cmd">\item</span>[student] имя пользователя
+      <span class="cmd">\end</span>{description}
+    <span class="cmd">\end</span>{column}
+  <span class="cmd">\end</span>{columns}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Создание пользователя</div>
+            <div class="slide-content">
+              <div class="two-col" style="align-items:center;">
+                <div class="code-block" style="font-size:0.55rem;">useradd -m -s<br>/bin/bash student</div>
+                <div style="font-size:0.61rem;line-height:1.7;"><b>-m</b> — домашний каталог<br><b>-s</b> — оболочка<br><b>student</b> — имя</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 16. Screenshot with explanations -->
+    <article class="pattern" data-category="visual">
+      <div class="pattern-header">
+        <span class="pattern-title">Скриншот + пояснения</span>
+        <span class="pattern-tag">image / annotations</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Учётные записи в Ubuntu}
+  <span class="cmd">\begin</span>{columns}[c]
+    <span class="cmd">\begin</span>{column}{0.65\textwidth}
+      <span class="cmd">\includegraphics</span>[width=\textwidth]{users-settings.png}
+    <span class="cmd">\end</span>{column}
+
+    <span class="cmd">\begin</span>{column}{0.31\textwidth}
+      <span class="cmd">\small</span>
+      <span class="cmd">\begin</span>{enumerate}
+        <span class="cmd">\item</span> список пользователей
+        <span class="cmd">\item</span> тип учётной записи
+        <span class="cmd">\item</span> управление паролем
+      <span class="cmd">\end</span>{enumerate}
+    <span class="cmd">\end</span>{column}
+  <span class="cmd">\end</span>{columns}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Учётные записи в Ubuntu</div>
+            <div class="slide-content">
+              <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.55rem;height:100%;align-items:center;">
+                <div style="height:78%;background:linear-gradient(135deg,#dbeafe,#e2e8f0);border:1px solid #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#475569;">[скриншот Ubuntu]</div>
+                <ol style="padding-left:1rem;font-size:0.58rem;line-height:1.6;"><li>Пользователи</li><li>Тип учётной записи</li><li>Пароль</li></ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 17. Process diagram -->
+    <article class="pattern" data-category="visual">
+      <div class="pattern-header">
+        <span class="pattern-title">Схема процесса / pipeline</span>
+        <span class="pattern-tag">TikZ / flow</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmt">% В преамбуле:</span>
+<span class="cmd">\usepackage</span>{tikz}
+<span class="cmd">\usetikzlibrary</span>{positioning,arrows.meta}
+
+<span class="cmd">\begin</span>{frame}{Процесс аутентификации}
+<span class="cmd">\centering</span>
+<span class="cmd">\begin</span>{tikzpicture}[
+  node distance=7mm,
+  box/.style={draw,rounded corners,minimum width=19mm,
+              minimum height=8mm,align=center},
+  &gt;={Latex}
+]
+  <span class="cmd">\node</span>[box] (login) {login};
+  <span class="cmd">\node</span>[box,right=of login] (pam) {PAM};
+  <span class="cmd">\node</span>[box,right=of pam] (db) {/etc/shadow};
+  <span class="cmd">\node</span>[box,right=of db] (session) {Session};
+  <span class="cmd">\draw</span>[-&gt;] (login) -- (pam);
+  <span class="cmd">\draw</span>[-&gt;] (pam) -- (db);
+  <span class="cmd">\draw</span>[-&gt;] (db) -- (session);
+<span class="cmd">\end</span>{tikzpicture}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Процесс аутентификации</div>
+            <div class="slide-content" style="display:flex;align-items:center;justify-content:center;">
+              <div style="display:flex;align-items:center;gap:0.22rem;font-size:0.56rem;white-space:nowrap;">
+                <span style="border:1px solid #1e3a5f;border-radius:4px;padding:0.35rem;">login</span><span>→</span>
+                <span style="border:1px solid #1e3a5f;border-radius:4px;padding:0.35rem;">PAM</span><span>→</span>
+                <span style="border:1px solid #1e3a5f;border-radius:4px;padding:0.35rem;">/etc/shadow</span><span>→</span>
+                <span style="border:1px solid #1e3a5f;border-radius:4px;padding:0.35rem;">Session</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 18. Workflow -->
+    <article class="pattern" data-category="visual">
+      <div class="pattern-header">
+        <span class="pattern-title">Последовательность шагов</span>
+        <span class="pattern-tag">enumerate / workflow</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Добавление пользователя}
+  <span class="cmd">\setbeamertemplate</span>{enumerate items}[circle]
+  <span class="cmd">\begin</span>{enumerate}
+    <span class="cmd">\item</span> Создать учётную запись
+    <span class="cmd">\item</span> Установить пароль
+    <span class="cmd">\item</span> Добавить в необходимые группы
+    <span class="cmd">\item</span> Проверить результат командой <span class="cmd">\texttt</span>{id}
+  <span class="cmd">\end</span>{enumerate}
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Добавление пользователя</div>
+            <div class="slide-content" style="display:flex;align-items:center;">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.28rem;width:100%;text-align:center;font-size:0.55rem;">
+                <div><div style="width:24px;height:24px;border-radius:50%;background:#1e3a5f;color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;">1</div>Создать</div>
+                <div><div style="width:24px;height:24px;border-radius:50%;background:#1e3a5f;color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;">2</div>Пароль</div>
+                <div><div style="width:24px;height:24px;border-radius:50%;background:#1e3a5f;color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;">3</div>Группы</div>
+                <div><div style="width:24px;height:24px;border-radius:50%;background:#1e3a5f;color:white;display:flex;align-items:center;justify-content:center;margin:0 auto 0.3rem;">4</div>Проверить</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 19. Takeaway -->
+    <article class="pattern" data-category="structure">
+      <div class="pattern-header">
+        <span class="pattern-title">Ключевая мысль / one-message slide</span>
+        <span class="pattern-tag">takeaway</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmd">\begin</span>{frame}[c]{Ключевая мысль}
+  <span class="cmd">\centering</span>
+  <span class="cmd">\Large</span>
+  В Linux пользователь идентифицируется прежде всего
+  <span class="cmd">\alert</span>{числовым UID}, а не именем.
+
+  <span class="cmd">\vspace</span>{1em}
+  <span class="cmd">\normalsize</span>
+  Имя пользователя — удобное для человека отображение идентификатора.
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Ключевая мысль</div>
+            <div class="slide-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+              <div style="font-size:0.95rem;font-weight:600;line-height:1.4;max-width:90%;">Пользователь Linux — это прежде всего <span style="color:#b91c1c;">UID</span>, а не имя.</div>
+              <div style="font-size:0.58rem;color:#64748b;margin-top:0.75rem;">Имя — удобное отображение числового идентификатора.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 20. Quiz -->
+    <article class="pattern" data-category="content">
+      <div class="pattern-header">
+        <span class="pattern-title">Контрольный вопрос / мини-задача</span>
+        <span class="pattern-tag">overlay / quiz</span>
+      </div>
+      <div class="pattern-body">
+        <div class="code-panel">
+          <div class="code-toolbar"><button class="copy-btn" onclick="copyCode(this)">Копировать</button></div>
+          <pre><code><span class="cmd">\begin</span>{frame}{Проверим понимание}
+  <span class="cmd">\textbf</span>{Какой UID имеет пользователь root?}
+
+  <span class="cmd">\begin</span>{enumerate}
+    <span class="cmd">\item</span> 1
+    <span class="cmd">\item</span> 1000
+    <span class="cmd">\item</span> 0
+    <span class="cmd">\item</span> Зависит от дистрибутива
+  <span class="cmd">\end</span>{enumerate}
+
+  <span class="cmd">\only</span>&lt;2&gt;{
+    <span class="cmd">\begin</span>{exampleblock}{Ответ}
+      UID пользователя root равен 0.
+    <span class="cmd">\end</span>{exampleblock}
+  }
+<span class="cmd">\end</span>{frame}</code></pre>
+        </div>
+        <div class="preview-panel">
+          <div class="slide">
+            <div class="slide-header">Проверим понимание</div>
+            <div class="slide-content">
+              <div style="font-size:0.73rem;font-weight:600;margin-bottom:0.5rem;">Какой UID имеет пользователь root?</div>
+              <ol type="A" style="padding-left:1.2rem;font-size:0.65rem;line-height:1.65;"><li>1</li><li>1000</li><li>0</li><li>Зависит от дистрибутива</li></ol>
+              <div class="block block-ex" style="margin-top:0.35rem;"><strong>Ответ на следующем overlay:</strong> UID = 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+
+  </div>
+
+  <footer>
+    Готовый статический сайт · можно открыть <code>index.html</code> локально<br>
+    Идеи паттернов: <a href="https://bamos.github.io/beamer-snippets/" target="_blank">bamos/beamer-snippets</a>
+  </footer>
+
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-panel').querySelector('pre');
+      // Берём чистый текст без HTML-тегов подсветки
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Скопировано!`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = original;
+        }, 1800);
+      });
+    }
+
+    // Фильтры
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.pattern').forEach(p => {
+          if (filter === 'all' || p.dataset.category === filter) {
+            p.style.display = '';
+          } else {
+            p.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
